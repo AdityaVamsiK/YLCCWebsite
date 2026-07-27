@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TENET 2026 — look this way</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=Space+Grotesk:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#101014; --paper:#FFFDF7; --hl:#F2FF49;
+    --magenta:#FF3D9E; --violet:#6C4CF1; --maroon:#8E1B32; --grey:#6E6B66;
+    --display:"Bricolage Grotesque","Arial Black",sans-serif;
+    --body:"Space Grotesk",system-ui,sans-serif;
+    --mono:"DM Mono",ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);line-height:1.5;overflow-x:hidden;
+    background-image:radial-gradient(var(--ink) .5px,transparent .5px);background-size:22px 22px;}
+  a{color:inherit;}
+  :focus-visible{outline:3px solid var(--violet);outline-offset:3px;}
+
+  .bar{position:sticky;top:0;z-index:60;background:var(--ink);color:var(--paper);
+    display:flex;align-items:center;gap:14px;padding:9px 18px;font-family:var(--mono);font-size:12px;}
+  .clock{color:var(--hl);font-variant-numeric:tabular-nums;}
+  .bar .btn{margin-left:auto;background:var(--hl);color:var(--ink);text-decoration:none;
+    padding:6px 13px;font-weight:500;white-space:nowrap;}
+  .bar .btn:hover{background:var(--magenta);color:var(--paper);}
+  @media(max-width:520px){.bar span:first-child{font-size:11px;}}
+
+  .wrap{max-width:1040px;margin:0 auto;padding:0 20px;}
+  section{padding:52px 0;position:relative;}
+  .eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--maroon);margin:0 0 12px;}
+  h2{font-family:var(--display);font-weight:800;font-size:clamp(28px,4.6vw,46px);
+    line-height:.99;letter-spacing:-.035em;margin:0 0 8px;}
+  .sub{font-size:16px;color:var(--grey);max-width:56ch;margin:0 0 26px;}
+  h3{font-family:var(--display);font-weight:700;font-size:18px;line-height:1.13;margin:0 0 6px;}
+  p{margin:0 0 12px;}
+
+  .strip{background:var(--ink);color:var(--hl);overflow:hidden;white-space:nowrap;
+    font-family:var(--mono);font-size:13px;letter-spacing:.1em;padding:10px 0;
+    border-top:3px solid var(--ink);border-bottom:3px solid var(--ink);}
+  .strip span{display:inline-block;animation:roll 24s linear infinite;padding-right:2rem;}
+  .strip.alt{background:var(--magenta);color:var(--paper);}
+  .strip.alt span{animation-duration:19s;animation-direction:reverse;}
+  @keyframes roll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+  /* ============ HERO / WORDMARK ============ */
+  .hero{padding:38px 0 30px;text-align:center;}
+  /* the logo file is blue-on-white; `multiply` drops its white box out so the
+     dotted paper shows straight through it, as if it were a transparent PNG */
+  .isb-hero{display:block;width:auto;height:clamp(52px,9.5vw,96px);
+    margin:0 auto 26px;mix-blend-mode:multiply;}
+  .kicker{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.22em;
+    text-transform:uppercase;background:var(--violet);color:#fff;padding:6px 14px;
+    transform:rotate(-1.5deg);margin-bottom:18px;}
+  .wordmark{font-family:var(--display);font-weight:800;line-height:.8;letter-spacing:-.05em;
+    margin:0 0 10px;display:flex;align-items:baseline;justify-content:center;gap:.14em;flex-wrap:wrap;}
+  .wordmark .t{font-size:clamp(66px,17.5vw,196px);background:var(--hl);color:var(--ink);
+    padding:.04em .09em .09em;border:4px solid var(--ink);box-shadow:10px 10px 0 var(--ink);
+    transform:rotate(-1.2deg);animation:slam .7s cubic-bezier(.2,1.5,.4,1) both;}
+  .wordmark .y{font-size:clamp(38px,9vw,102px);color:var(--paper);-webkit-text-stroke:4px var(--ink);
+    animation:slam .7s .12s cubic-bezier(.2,1.5,.4,1) both;}
+  @keyframes slam{from{opacity:0;transform:scale(1.22) rotate(-4deg);}to{opacity:1;}}
+  .hero .lede{font-size:clamp(16px,2.2vw,20px);max-width:50ch;margin:26px auto 0;}
+  .hero .lede b{background:linear-gradient(transparent 62%,var(--hl) 62%);}
+  .tiny{font-family:var(--mono);font-size:12px;color:var(--grey);}
+  .ctas{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:22px;}
+  .cta{display:inline-block;text-decoration:none;font-family:var(--mono);font-size:13px;
+    padding:13px 22px;border:3px solid var(--ink);box-shadow:5px 5px 0 var(--ink);
+    transition:transform .12s,box-shadow .12s;}
+  .cta:hover{transform:translate(2px,2px) rotate(-1deg);box-shadow:3px 3px 0 var(--ink);}
+  .cta.solid{background:var(--magenta);color:var(--paper);}
+  .cta.ghost{background:var(--paper);}
+  .cta.deck{background:var(--ink);color:var(--paper);}
+  .cta.deck:hover{background:var(--violet);}
+  [hidden]{display:none !important;}
+
+  /* ============ MEME STAGE ============ */
+  .stage{position:relative;border:3px solid var(--ink);box-shadow:8px 8px 0 var(--ink);
+    background:var(--paper);margin:30px 0 0;overflow:hidden;text-align:left;}
+  .stage svg{display:block;width:100%;height:auto;}
+  .tape{position:absolute;top:10px;left:10px;z-index:3;font-family:var(--mono);font-size:10.5px;
+    letter-spacing:.14em;text-transform:uppercase;background:var(--hl);border:2px solid var(--ink);
+    padding:4px 9px;transform:rotate(-2deg);}
+  .tag{position:absolute;z-index:4;background:var(--ink);color:var(--paper);font-family:var(--mono);
+    font-size:clamp(8.5px,1.35vw,13px);line-height:1.25;padding:5px 8px;text-align:center;
+    border:2px solid var(--ink);max-width:31%;}
+  .tag b{color:var(--hl);font-weight:500;}
+  .tag.a{left:2.5%;top:63%;transform:rotate(-2deg);background:var(--magenta);}
+  .tag.a b{color:var(--ink);}
+  .tag.b{left:35.5%;top:79%;transform:rotate(1deg);}
+  .tag.c{right:2.5%;top:63%;transform:rotate(2deg);background:var(--grey);}
+  .tag.c b{color:var(--paper);}
+
+  /* meme motion */
+  #figA,#figB,#figC,#bHead,.heart,.spark,.zaps{transform-box:fill-box;}
+  #figA{transform-origin:50% 100%;animation:bob 2.6s ease-in-out infinite;}
+  #figB{transform-origin:50% 100%;animation:lean 4.2s ease-in-out infinite;}
+  #figC{transform-origin:50% 100%;animation:fume 1.1s ease-in-out infinite;}
+  #bHead{transform-origin:50% 94%;animation:stare 4.2s ease-in-out infinite;}
+  .heart{transform-origin:50% 50%;animation:floaty 3.2s ease-in-out infinite;}
+  .heart:nth-of-type(2){animation-delay:1.05s;}
+  .heart:nth-of-type(3){animation-delay:2.1s;}
+  .spark{transform-origin:50% 50%;animation:twinkle 2.2s ease-in-out infinite;}
+  .spark:nth-of-type(2){animation-delay:.7s;}
+  .spark:nth-of-type(3){animation-delay:1.4s;}
+  .zaps{animation:zap 1.1s steps(2,end) infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0) rotate(-.7deg);}50%{transform:translateY(-8px) rotate(.7deg);}}
+  @keyframes lean{0%,38%{transform:rotate(0) translateY(0);}55%,88%{transform:rotate(-2.2deg) translateY(-3px);}100%{transform:rotate(0) translateY(0);}}
+  @keyframes stare{0%,38%{transform:rotate(-1deg);}55%,88%{transform:rotate(-10deg);}100%{transform:rotate(-1deg);}}
+  @keyframes fume{0%,100%{transform:rotate(-1deg);}25%{transform:rotate(1deg);}50%{transform:rotate(-.6deg);}75%{transform:rotate(1.3deg);}}
+  @keyframes floaty{0%{opacity:0;transform:translateY(8px) scale(.6);}22%{opacity:1;}100%{opacity:0;transform:translateY(-40px) scale(1.2);}}
+  @keyframes twinkle{0%,100%{opacity:.3;transform:scale(.78) rotate(0);}50%{opacity:1;transform:scale(1.15) rotate(35deg);}}
+  @keyframes zap{0%,100%{opacity:.2;}50%{opacity:1;}}
+  @media(prefers-reduced-motion:reduce){
+    .strip span,#figA,#figB,#figC,#bHead,.heart,.spark,.zaps,.wordmark .t,.wordmark .y{animation:none;}
+    .heart{opacity:1;}
+  }
+
+  /* ============ INFORMATION BAND ============
+     Everything between the two marquees sits on a cooler, gridded surface —
+     the dotted off-white returns for the "your move" section. The marquees
+     are solid, so they hide the seam where the two backgrounds meet. */
+  .band{background-color:var(--ink);color:var(--paper);
+    background-image:linear-gradient(rgba(255,253,247,.075) 1px,transparent 1px),
+                     linear-gradient(90deg,rgba(255,253,247,.075) 1px,transparent 1px);
+    background-size:28px 28px;}
+  .band .eyebrow{color:var(--hl);}
+  .band h2{color:var(--paper);}
+  .band .sub{color:rgba(255,253,247,.62);}
+  .band .fine{color:rgba(255,253,247,.5);}
+  /* the band paints text white, so every white block inside it must reset to
+     ink — otherwise headings and table cells are white-on-white. The violet
+     and pink cards set their own colours after this and stay light. */
+  .band .card,.band .steps,.band .scroll{color:var(--ink);}
+  /* white blocks on black, with a coloured offset instead of the ink one
+     (an ink shadow would be invisible against an ink background) */
+  .band .card,.band .steps,.band .scroll{box-shadow:7px 7px 0 var(--hl);}
+  .band .card.yellow{box-shadow:7px 7px 0 var(--magenta);}
+  .band .card.violet{border-color:var(--paper);}
+  .band .card:hover{box-shadow:10px 10px 0 var(--magenta);}
+  .band .card.yellow:hover{box-shadow:10px 10px 0 var(--violet);}
+
+  /* ============ CARDS ============ */
+  .grid{display:grid;gap:16px;}
+  .g3{grid-template-columns:repeat(3,1fr);}
+  .g4{grid-template-columns:repeat(4,1fr);}
+  @media(max-width:820px){.g3,.g4{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:520px){.g3,.g4{grid-template-columns:1fr;}}
+  .card{border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);background:var(--paper);
+    padding:17px;transition:transform .14s;}
+  .card:hover{transform:rotate(-1deg) translateY(-3px);}
+  .card p{font-size:14.5px;color:var(--grey);margin:0;}
+  .card .big{font-family:var(--display);font-weight:800;font-size:clamp(28px,4vw,40px);
+    line-height:1;letter-spacing:-.03em;margin:0 0 2px;color:var(--ink);}
+  .card .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--grey);}
+  .card.yellow{background:var(--hl);}
+  .card.violet{background:var(--violet);}
+  .card.violet .big,.card.violet h3{color:var(--paper);}
+  .card.violet p,.card.violet .lbl{color:rgba(255,255,255,.84);}
+  .card.pink{background:var(--magenta);}
+  .card.pink .big,.card.pink h3{color:var(--paper);}
+  .card.pink p,.card.pink .lbl{color:rgba(255,255,255,.88);}
+
+  /* timeline */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);border:3px solid var(--ink);
+    box-shadow:6px 6px 0 var(--ink);background:var(--paper);}
+  .step{padding:16px;border-right:2px solid var(--ink);}
+  .step:last-child{border-right:0;background:var(--hl);}
+  .step .d{font-family:var(--mono);font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;
+    color:var(--maroon);margin:0 0 6px;}
+  .step h3{margin-bottom:4px;}
+  .step p{font-size:14px;color:var(--grey);margin:0;}
+  @media(max-width:640px){.steps{grid-template-columns:1fr;}
+    .step{border-right:0;border-bottom:2px solid var(--ink);}.step:last-child{border-bottom:0;}}
+
+  /* tiers */
+  .scroll{overflow-x:auto;border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);background:var(--paper);}
+  table{width:100%;border-collapse:collapse;font-size:14px;min-width:640px;}
+  th,td{border:2px solid var(--ink);padding:10px 12px;text-align:left;}
+  th{font-family:var(--mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;
+    background:var(--ink);color:var(--paper);vertical-align:top;}
+  th .price{display:block;font-family:var(--display);font-weight:800;font-size:19px;
+    text-transform:none;letter-spacing:0;margin-top:4px;color:var(--hl);}
+  th.star{background:var(--maroon);}
+  td:first-child{font-weight:700;}
+  td.y{text-align:center;font-weight:700;}
+  td.n{text-align:center;color:var(--grey);}
+  tbody tr td:nth-child(2){background:rgba(242,255,73,.55);}
+  tbody tr:hover td{background:var(--hl);}
+  .fine{font-family:var(--mono);font-size:11.5px;color:var(--grey);line-height:1.6;margin-top:14px;}
+
+  /* ============ YES / NO ============ */
+  .close{text-align:center;padding:60px 0 54px;}
+  .close h2{font-size:clamp(36px,7.5vw,72px);}
+  .close h2 .swipe{background:var(--hl);box-shadow:0 0 0 6px var(--hl);}
+
+  /* the ring */
+  .ring{display:inline-block;vertical-align:middle;width:clamp(52px,8.5vw,88px);
+    margin-left:.1em;line-height:0;}
+  .ring svg{display:block;width:100%;height:auto;overflow:visible;}
+  .ring .rock,.ring .glint{transform-box:fill-box;}
+  .ring .rock{transform-origin:50% 92%;animation:ringbob 3.6s ease-in-out infinite;}
+  .ring .glint{transform-origin:50% 50%;animation:glint 2.4s ease-in-out infinite;}
+  .ring .glint:nth-of-type(2){animation-delay:.8s;}
+  .ring .glint:nth-of-type(3){animation-delay:1.6s;}
+  .ring .glint:nth-of-type(4){animation-delay:.4s;}
+  @keyframes ringbob{0%,100%{transform:translateY(0) rotate(-3.5deg);}50%{transform:translateY(-6px) rotate(3.5deg);}}
+  @keyframes glint{0%,100%{opacity:.12;transform:scale(.4) rotate(0);}50%{opacity:1;transform:scale(1.12) rotate(45deg);}}
+  /* after they say yes: one triumphant pop, then a faster shimmer */
+  .ring.yes .rock{animation:ringpop .7s cubic-bezier(.34,1.8,.5,1) 1,ringbob 3.6s ease-in-out .7s infinite;}
+  .ring.yes .glint{animation-duration:1.1s;}
+  @keyframes ringpop{0%{transform:scale(1) rotate(0);}45%{transform:scale(1.45) rotate(-12deg);}100%{transform:scale(1) rotate(0);}}
+
+  .said{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--maroon);margin:2px 0 0;}
+  .said.show{animation:saidIn .55s .15s ease both;}
+  @keyframes saidIn{from{opacity:0;transform:translateY(-5px);}to{opacity:1;transform:none;}}
+  @media(prefers-reduced-motion:reduce){
+    .ring .rock,.ring .glint,.ring.yes .rock,.said.show{animation:none;}
+    .ring .glint{opacity:1;}
+  }
+  .memebox{max-width:620px;margin:26px auto 0;}
+  .dialog{border:3px solid var(--ink);box-shadow:10px 10px 0 var(--ink);background:var(--paper);}
+  .dialog-bar{background:var(--ink);color:var(--paper);font-family:var(--mono);font-size:11.5px;
+    display:flex;align-items:center;justify-content:space-between;padding:7px 10px;}
+  .dialog-bar .dots{letter-spacing:.25em;color:var(--grey);}
+  .dialog-body{padding:26px 20px 30px;text-align:center;}
+  .dialog-q{font-family:var(--display);font-weight:800;font-size:clamp(22px,4vw,34px);
+    line-height:1.03;letter-spacing:-.03em;margin:0 0 8px;}
+  .dialog-sub{font-family:var(--mono);font-size:12px;color:var(--grey);margin:0 0 24px;min-height:2.2em;}
+  .choice{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;min-height:96px;}
+  #yesBtn{font-family:var(--display);font-weight:800;letter-spacing:-.02em;background:var(--hl);
+    color:var(--ink);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);cursor:pointer;
+    font-size:26px;padding:14px 30px;transition:all .18s cubic-bezier(.34,1.56,.64,1);line-height:1;}
+  #yesBtn:hover{background:var(--magenta);color:var(--paper);}
+  #noBtn{font-family:var(--mono);background:var(--paper);color:var(--grey);border:3px solid var(--ink);
+    box-shadow:4px 4px 0 var(--ink);cursor:pointer;font-size:15px;padding:11px 18px;
+    transition:all .18s ease;line-height:1;}
+  #noBtn:hover{background:var(--ink);color:var(--paper);}
+  #noBtn.dead{cursor:not-allowed;opacity:.35;box-shadow:none;}
+  .won{display:none;}
+  .won.show{display:block;animation:pop .4s cubic-bezier(.34,1.56,.64,1);}
+  @keyframes pop{from{transform:scale(.85);opacity:0;}to{transform:scale(1);opacity:1;}}
+
+  /* lead form */
+  .lead{display:grid;grid-template-columns:1fr 1fr;gap:14px;text-align:left;margin-top:4px;}
+  .lead label{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--maroon);}
+  .lead .full{grid-column:1 / -1;}
+  .lead .opt{color:var(--grey);text-transform:none;letter-spacing:0;}
+  .lead input,.lead select{width:100%;margin-top:6px;font-family:var(--body);font-size:15px;
+    color:var(--ink);background:var(--paper);border:3px solid var(--ink);box-shadow:4px 4px 0 var(--ink);
+    padding:11px 12px;border-radius:0;-webkit-appearance:none;appearance:none;}
+  .lead select{background-image:linear-gradient(45deg,transparent 50%,var(--ink) 50%),linear-gradient(135deg,var(--ink) 50%,transparent 50%);
+    background-position:calc(100% - 20px) 22px,calc(100% - 14px) 22px;background-size:6px 6px,6px 6px;
+    background-repeat:no-repeat;padding-right:38px;}
+  .lead input:focus,.lead select:focus{outline:none;background:#fff;box-shadow:4px 4px 0 var(--violet);}
+  .lead input:invalid:not(:placeholder-shown){box-shadow:4px 4px 0 var(--maroon);}
+  .lead .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0;}
+  .submit{grid-column:1 / -1;font-family:var(--display);font-weight:800;font-size:24px;letter-spacing:-.02em;
+    background:var(--hl);color:var(--ink);border:3px solid var(--ink);box-shadow:7px 7px 0 var(--ink);
+    padding:15px 24px;cursor:pointer;transition:transform .12s,box-shadow .12s,background .12s;margin-top:4px;}
+  .submit:hover{background:var(--magenta);color:var(--paper);transform:translate(2px,2px);box-shadow:5px 5px 0 var(--ink);}
+  .submit[disabled]{opacity:.55;cursor:wait;}
+  .formnote{grid-column:1 / -1;font-family:var(--mono);font-size:11.5px;color:var(--grey);
+    margin:0;text-align:center;min-height:1.4em;}
+  .formnote.err{color:var(--maroon);}
+  @media(max-width:520px){.lead{grid-template-columns:1fr;}}
+  .confetti{position:fixed;inset:0;pointer-events:none;z-index:90;overflow:hidden;}
+  .confetti i{position:absolute;top:-30px;font-style:normal;font-size:18px;animation:fall linear forwards;}
+  @keyframes fall{to{transform:translateY(105vh) rotate(540deg);opacity:.2;}}
+  @media(prefers-reduced-motion:reduce){.confetti{display:none;}#yesBtn,#noBtn{transition:none;}}
+
+  .contacts{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin-top:26px;
+    font-family:var(--mono);font-size:12.5px;}
+  .contacts div{border:3px solid var(--ink);box-shadow:5px 5px 0 var(--ink);padding:13px 17px;
+    background:var(--paper);text-align:left;}
+  .contacts b{display:block;font-family:var(--body);font-size:15.5px;font-weight:700;margin-bottom:3px;}
+  .contacts a{text-decoration:none;border-bottom:2px solid var(--hl);word-break:break-all;}
+  footer{padding:30px 0 46px;font-family:var(--mono);font-size:11.5px;color:var(--grey);text-align:center;}
+  footer img{height:30px;width:auto;display:block;margin:0 auto 14px;mix-blend-mode:multiply;}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <span>⏳ registrations open <b>Aug 12</b> · <span class="clock" id="clock">—</span></span>
+  <a class="btn" href="#yes">ok fine, talk to me</a>
+</div>
+
+<div class="wrap">
+<header class="hero">
+  <img class="isb-hero" src="assets/isb-logo.jpg" alt="Indian School of Business"
+       width="500" height="168" decoding="async">
+  <span class="kicker">national case championship · ISB PGP YL</span>
+
+  <h1 class="wordmark"><span class="t">TENET</span><span class="y">2026</span></h1>
+
+  <p class="lede"><b>12 premier B-schools. 1,500+ students.</b> One company's real business problem at the centre of all of it — and that company slot is still open.</p>
+
+  <div class="stage">
+    <span class="tape">exhibit A · your campus strategy</span>
+
+    <svg viewBox="0 0 900 470" role="img" aria-label="Distracted boyfriend meme: a company walking with the other case comps turns around to stare at TENET 2026.">
+      <g stroke-linecap="round" stroke-linejoin="round">
+
+        <line x1="0" y1="436" x2="900" y2="436" stroke="#101014" stroke-width="5"/>
+        <ellipse cx="186" cy="442" rx="86" ry="12" fill="#101014" opacity=".13"/>
+        <ellipse cx="470" cy="444" rx="92" ry="12" fill="#101014" opacity=".13"/>
+        <ellipse cx="722" cy="442" rx="86" ry="12" fill="#101014" opacity=".13"/>
+
+        <g fill="#F2FF49" stroke="#101014" stroke-width="3">
+          <path class="spark" d="M64 120 l7 17 17 7 -17 7 -7 17 -7 -17 -17 -7 17 -7 z"/>
+          <path class="spark" d="M276 74 l6 14 14 6 -14 6 -6 14 -6 -14 -14 -6 14 -6 z"/>
+          <path class="spark" d="M40 296 l5 12 12 5 -12 5 -5 12 -5 -12 -12 -5 12 -5 z"/>
+        </g>
+
+        <!-- A · TENET -->
+        <g id="figA">
+          <path d="M186 300 L150 424" stroke="#101014" stroke-width="27"/>
+          <path d="M186 300 L150 424" stroke="#FFFDF7" stroke-width="17"/>
+          <path d="M186 300 L228 420" stroke="#101014" stroke-width="27"/>
+          <path d="M186 300 L228 420" stroke="#FFFDF7" stroke-width="17"/>
+          <ellipse cx="144" cy="428" rx="22" ry="10" fill="#101014"/>
+          <ellipse cx="234" cy="424" rx="22" ry="10" fill="#101014"/>
+          <path d="M214 122 q42 12 38 54 q-4 34 -26 46 q16 -38 2 -64 q-8 -16 -24 -20 z" fill="#101014"/>
+          <path d="M156 216 L116 258 L124 292" stroke="#101014" stroke-width="25" fill="none"/>
+          <path d="M156 216 L116 258 L124 292" stroke="#FF3D9E" stroke-width="15" fill="none"/>
+          <circle cx="124" cy="294" r="11" fill="#FFFDF7" stroke="#101014" stroke-width="4"/>
+          <path d="M152 194 L220 194 L240 312 L132 312 Z" fill="#FF3D9E" stroke="#101014" stroke-width="5"/>
+          <path d="M216 214 L252 258" stroke="#101014" stroke-width="25" fill="none"/>
+          <path d="M216 214 L252 258" stroke="#FF3D9E" stroke-width="15" fill="none"/>
+          <circle cx="254" cy="262" r="11" fill="#FFFDF7" stroke="#101014" stroke-width="4"/>
+          <path d="M244 272 q10 -16 20 0" fill="none" stroke="#101014" stroke-width="4"/>
+          <rect x="226" y="272" width="58" height="42" rx="4" fill="#F2FF49" stroke="#101014" stroke-width="5"/>
+          <path d="M236 293 h38" stroke="#101014" stroke-width="4"/>
+          <path d="M186 172 L186 200" stroke="#101014" stroke-width="24"/>
+          <path d="M186 172 L186 200" stroke="#FFFDF7" stroke-width="14"/>
+          <circle cx="186" cy="150" r="34" fill="#FFFDF7" stroke="#101014" stroke-width="5"/>
+          <path d="M150 154 C146 104 166 88 188 88 C212 88 230 106 224 154 C220 128 208 120 186 124 C166 127 156 134 150 154 Z" fill="#101014"/>
+          <rect x="160" y="141" width="22" height="15" rx="6" fill="#101014"/>
+          <rect x="188" y="141" width="22" height="15" rx="6" fill="#101014"/>
+          <path d="M182 147 h6" stroke="#101014" stroke-width="4"/>
+          <path d="M176 170 q11 9 22 -1" fill="none" stroke="#101014" stroke-width="4"/>
+        </g>
+
+        <!-- B · the company -->
+        <g id="figB">
+          <g stroke="#101014" stroke-width="3" fill="#FF3D9E">
+            <path class="heart" d="M362 78 c0 -8 11 -10 14 -1 c3 -9 14 -7 14 1 c0 11 -14 20 -14 20 c0 0 -14 -9 -14 -20 z"/>
+            <path class="heart" d="M320 132 c0 -6 8 -8 10 -1 c2 -7 10 -5 10 1 c0 8 -10 14 -10 14 c0 0 -10 -6 -10 -14 z"/>
+            <path class="heart" d="M408 46 c0 -5 7 -6 9 -1 c2 -5 9 -4 9 1 c0 7 -9 13 -9 13 c0 0 -9 -6 -9 -13 z"/>
+          </g>
+          <path d="M470 300 L444 426" stroke="#101014" stroke-width="28"/>
+          <path d="M470 300 L502 426" stroke="#101014" stroke-width="28"/>
+          <ellipse cx="438" cy="430" rx="23" ry="10" fill="#101014"/>
+          <ellipse cx="508" cy="430" rx="23" ry="10" fill="#101014"/>
+          <path d="M516 214 L570 248 L610 268" stroke="#101014" stroke-width="26" fill="none"/>
+          <path d="M516 214 L570 248 L610 268" stroke="#6C4CF1" stroke-width="16" fill="none"/>
+          <path d="M424 196 L516 196 L528 306 L412 306 Z" fill="#6C4CF1" stroke="#101014" stroke-width="5"/>
+          <path d="M456 196 L470 220 L484 196" fill="#FFFDF7" stroke="#101014" stroke-width="4"/>
+          <path d="M470 220 L481 236 L473 284 L461 236 Z" fill="#F2FF49" stroke="#101014" stroke-width="4"/>
+          <path d="M428 212 L386 240 L366 210" stroke="#101014" stroke-width="26" fill="none"/>
+          <path d="M428 212 L386 240 L366 210" stroke="#6C4CF1" stroke-width="16" fill="none"/>
+          <circle cx="362" cy="204" r="12" fill="#FFFDF7" stroke="#101014" stroke-width="4"/>
+          <path d="M458 172 L462 200" stroke="#101014" stroke-width="24"/>
+          <path d="M458 172 L462 200" stroke="#FFFDF7" stroke-width="14"/>
+          <g id="bHead">
+            <circle cx="452" cy="148" r="34" fill="#FFFDF7" stroke="#101014" stroke-width="5"/>
+            <path d="M418 144 C416 104 440 92 458 94 C482 96 492 116 486 146 C480 122 460 118 438 126 C428 130 422 134 418 144 Z" fill="#101014"/>
+            <path d="M484 148 q10 2 8 12 q-2 8 -10 6" fill="#FFFDF7" stroke="#101014" stroke-width="4"/>
+            <circle cx="430" cy="150" r="7" fill="#101014"/>
+            <circle cx="450" cy="150" r="7" fill="#101014"/>
+            <path d="M420 134 q10 -8 20 -3" fill="none" stroke="#101014" stroke-width="4"/>
+            <path d="M444 131 q10 -6 18 1" fill="none" stroke="#101014" stroke-width="4"/>
+            <ellipse cx="436" cy="171" rx="8" ry="10" fill="#8E1B32" stroke="#101014" stroke-width="4"/>
+          </g>
+        </g>
+
+        <!-- C · the other case comps -->
+        <g id="figC">
+          <g class="zaps" stroke="#8E1B32" stroke-width="5" fill="none">
+            <path d="M782 96 l20 -18"/><path d="M796 116 l24 -8"/><path d="M766 80 l8 -24"/>
+          </g>
+          <path d="M722 300 L700 426" stroke="#101014" stroke-width="27"/>
+          <path d="M722 300 L700 426" stroke="#FFFDF7" stroke-width="17"/>
+          <path d="M722 300 L746 426" stroke="#101014" stroke-width="27"/>
+          <path d="M722 300 L746 426" stroke="#FFFDF7" stroke-width="17"/>
+          <ellipse cx="694" cy="430" rx="21" ry="10" fill="#101014"/>
+          <ellipse cx="752" cy="430" rx="21" ry="10" fill="#101014"/>
+          <path d="M682 150 q0 -62 40 -62 q40 0 40 62 q8 74 -4 100 q-12 -42 -16 -64 l-40 0 q-4 26 -16 64 q-12 -32 -4 -100 z" fill="#101014"/>
+          <path d="M752 214 L788 250 L764 288" stroke="#101014" stroke-width="25" fill="none"/>
+          <path d="M752 214 L788 250 L764 288" stroke="#6E6B66" stroke-width="15" fill="none"/>
+          <path d="M690 194 L754 194 L770 310 L674 310 Z" fill="#6E6B66" stroke="#101014" stroke-width="5"/>
+          <path d="M692 212 L656 244 L626 266" stroke="#101014" stroke-width="25" fill="none"/>
+          <path d="M692 212 L656 244 L626 266" stroke="#6E6B66" stroke-width="15" fill="none"/>
+          <circle cx="616" cy="268" r="15" fill="#FFFDF7" stroke="#101014" stroke-width="5"/>
+          <path d="M722 172 L722 198" stroke="#101014" stroke-width="23"/>
+          <path d="M722 172 L722 198" stroke="#FFFDF7" stroke-width="13"/>
+          <circle cx="722" cy="150" r="33" fill="#FFFDF7" stroke="#101014" stroke-width="5"/>
+          <path d="M689 152 C686 106 706 90 724 90 C746 90 762 108 756 152 C752 126 740 118 720 122 C702 125 694 132 689 152 Z" fill="#101014"/>
+          <circle cx="706" cy="152" r="6.5" fill="#101014"/>
+          <circle cx="726" cy="152" r="6.5" fill="#101014"/>
+          <path d="M696 136 L716 144" stroke="#101014" stroke-width="5"/>
+          <path d="M736 138 L722 145" stroke="#101014" stroke-width="5"/>
+          <path d="M706 170 q14 -10 28 0 q-14 12 -28 0 z" fill="#8E1B32" stroke="#101014" stroke-width="4"/>
+        </g>
+      </g>
+    </svg>
+
+    <span class="tag a"><b>her:</b> TENET 2026</span>
+    <span class="tag b"><b>him:</b> <span class="co">your firm</span>'s campus budget</span>
+    <span class="tag c"><b>his current situation:</b> the other 400 case comps</span>
+  </div>
+
+  <div class="ctas">
+    <a class="cta solid" href="#yes">fine, I'm looking →</a>
+    <a class="cta deck deckLink" href="#" download hidden>the formal deck (pdf) ↓</a>
+    <a class="cta ghost" href="#tiers">skip to the prices</a>
+  </div>
+</header>
+</div>
+
+<!-- ===== information band: cooler gridded surface, marquee to marquee ===== -->
+<div class="band">
+
+<div class="strip"><span>1,500+ STUDENTS ✦ 12 B-SCHOOLS ✦ 3 ROUNDS ✦ 1 LIVE FINALE ✦ 1 PROBLEM STATEMENT — YOURS ✦ 1,500+ STUDENTS ✦ 12 B-SCHOOLS ✦ 3 ROUNDS ✦ 1 LIVE FINALE ✦ 1 PROBLEM STATEMENT — YOURS ✦ </span></div>
+
+<div class="wrap">
+<section>
+  <p class="eyebrow">the whole thing, in one screen</p>
+  <h2>You give us one live business problem.<br>We give it to the country's sharpest students.</h2>
+  <p class="sub">Three elimination rounds, a live finale at ISB Hyderabad on Sep 12. You leave with every surviving strategy — and the names of the people who wrote them, before placement season opens.</p>
+  <div class="grid g4" style="margin-bottom:16px;">
+    <div class="card yellow"><p class="big">1,500+</p><p class="lbl">students, round 1</p></div>
+    <div class="card"><p class="big">12</p><p class="lbl">premier B-schools</p></div>
+    <div class="card violet"><p class="big">3</p><p class="lbl">elimination rounds</p></div>
+    <div class="card"><p class="big">Sep 12</p><p class="lbl">finale · ISB Hyderabad</p></div>
+  </div>
+  <h2 style="margin:42px 0 16px;">What's in it for you?</h2>
+  <div class="grid g3">
+    <div class="card"><h3>Hundreds of strategies</h3><p>Distinct proposals on the exact problem you set. Yours to keep.</p></div>
+    <div class="card"><h3>First look at the talent</h3><p>PPI / PPO rights and a vetted resume pool, ahead of placement season.</p></div>
+    <div class="card pink"><h3>A month on 12 campuses</h3><p>Merch, mailers, Unstop, socials, and branding across the finale.</p></div>
+  </div>
+</section>
+
+<section style="padding-top:0;">
+  <p class="eyebrow">the calendar</p>
+  <h2>Timelines</h2>
+  <p class="sub">Registrations open Aug 12 — your problem statement has to exist before that. The finale doesn't move.</p>
+  <div class="steps">
+    <div class="step"><p class="d">Aug 12 – 22</p><h3>Round 1</h3><p>3-slide strategy framework. Results Aug 24.</p></div>
+    <div class="step"><p class="d">Aug 24 – 30</p><h3>Round 2</h3><p>7-slide deck + 1-min pitch video. Results Sep 1.</p></div>
+    <div class="step"><p class="d">Sep 12</p><h3>Grand Finale</h3><p>Live pitch to your jury, on campus. Champion crowned.</p></div>
+  </div>
+  <p class="fine">ISB · 23 years · 20,000+ alumni · triple accredited (AACSB · AMBA · EQUIS) — and TENET is run by PGP YL, its 20-month full-time programme for people with 0–2 years of work ex and something to prove.</p>
+</section>
+
+<section id="tiers">
+  <p class="eyebrow">the ask</p>
+  <h2>Prices, on the page.</h2>
+  <div class="scroll">
+    <table>
+      <thead>
+        <tr>
+          <th style="min-width:220px;">What you get</th>
+          <th class="star">Knowledge Partner ★<span class="price">₹4,00,000</span></th>
+          <th>Associate<span class="price">₹2,00,000</span></th>
+          <th>Power<span class="price">₹75,000</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Title sponsor</td><td class="y">✓</td><td class="n">—</td><td class="n">—</td></tr>
+        <tr><td>Problem-statement ownership</td><td class="y">✓</td><td class="n">—</td><td class="n">—</td></tr>
+        <tr><td>Speaker session + merch branding</td><td class="y">✓</td><td class="y">merch only</td><td class="n">—</td></tr>
+        <tr><td>1:1 mentorship with top students</td><td class="y">✓</td><td class="y">✓</td><td class="n">—</td></tr>
+        <tr><td>Pre-placement interviews for winners*</td><td class="y">✓</td><td class="y">✓</td><td class="n">—</td></tr>
+        <tr><td>Social-media presence**</td><td class="y">100%</td><td class="y">75%</td><td class="y">50%</td></tr>
+        <tr><td>Website, mailers &amp; Unstop branding</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="fine">
+    * Subject to the Company's policy; for finalists from other B-schools, subject to their school's policy.<br>
+    ** Via ISB's student-run handles. Official ISB handles post about the event, not sponsors. Percentages are share of branding real estate across student-run collateral.
+  </p>
+</section>
+</div>
+
+<div class="strip alt"><span>THE PROBLEM STATEMENT IS STILL UNCLAIMED ✦ THE PROBLEM STATEMENT IS STILL UNCLAIMED ✦ THE PROBLEM STATEMENT IS STILL UNCLAIMED ✦ </span></div>
+
+</div><!-- /band — back to the dotted off-white from here -->
+
+<div class="wrap">
+<section class="close" id="yes">
+  <p class="eyebrow">your move</p>
+  <h2>so… <span class="swipe">you in?</span><span class="ring" id="ring" aria-hidden="true">
+    <svg viewBox="0 0 120 132" stroke-linecap="round" stroke-linejoin="round">
+      <g class="rock">
+        <!-- band -->
+        <ellipse cx="60" cy="92" rx="29" ry="31" fill="none" stroke="#101014" stroke-width="15"/>
+        <ellipse cx="60" cy="92" rx="29" ry="31" fill="none" stroke="#F2FF49" stroke-width="7"/>
+        <!-- prongs -->
+        <path d="M47 63 L44 50 M73 63 L76 50" stroke="#101014" stroke-width="7"/>
+        <!-- the rock -->
+        <path d="M32 46 L46 24 L74 24 L88 46 L60 78 Z" fill="#FFFDF7" stroke="#101014" stroke-width="6"/>
+        <path d="M46 24 L52 46 L60 78 L68 46 L74 24" fill="none" stroke="#101014" stroke-width="4"/>
+        <path d="M32 46 L88 46" stroke="#101014" stroke-width="4"/>
+        <path d="M52 46 L68 46 L60 78 Z" fill="#6C4CF1"/>
+        <path d="M46 24 L74 24 L68 46 L52 46 Z" fill="#FF3D9E" opacity=".9"/>
+        <path d="M46 24 L52 46 L68 46 L74 24" fill="none" stroke="#101014" stroke-width="4"/>
+      </g>
+      <g stroke="#101014" stroke-width="2.5">
+        <path class="glint" d="M104 16 q2 12 12 14 q-10 2 -12 14 q-2 -12 -12 -14 q10 -2 12 -14 z" fill="#F2FF49"/>
+        <path class="glint" d="M14 40 q1.6 9 9 10 q-7.4 1 -9 10 q-1.6 -9 -9 -10 q7.4 -1 9 -10 z" fill="#FF3D9E"/>
+        <path class="glint" d="M100 84 q1.3 7 7 8 q-5.7 1 -7 8 q-1.3 -7 -7 -8 q5.7 -1 7 -8 z" fill="#F2FF49"/>
+        <path class="glint" d="M60 4 q1.1 6 6 7 q-4.9 1 -6 7 q-1.1 -6 -6 -7 q4.9 -1 6 -7 z" fill="#6C4CF1"/>
+      </g>
+    </svg>
+  </span></h2>
+  <p class="said" id="said" hidden>she said yes 💍</p>
+
+  <div class="memebox">
+    <div class="dialog">
+      <div class="dialog-bar"><span>tenet_2026_sponsorship.exe</span><span class="dots">— □ ✕</span></div>
+      <div class="dialog-body">
+        <div id="ask">
+          <p class="dialog-q">Sponsor TENET 2026?</p>
+          <p class="dialog-sub" id="dsub">this dialog cannot be closed. we removed that feature.</p>
+          <div class="choice">
+            <button id="yesBtn" type="button">YES</button>
+            <button id="noBtn" type="button">no</button>
+          </div>
+        </div>
+
+        <div class="won" id="formPanel">
+          <p class="dialog-q">Correct answer. 🏆</p>
+          <p class="dialog-sub">two fields and a name. we'll do the rest.</p>
+          <form class="lead" id="leadForm" novalidate>
+            <label>Your name
+              <input name="name" required autocomplete="name" placeholder="Jane Mehta">
+            </label>
+            <label>Work email
+              <input name="email" type="email" required autocomplete="email" placeholder="jane@firm.com">
+            </label>
+            <label>Company
+              <input name="company" id="coField" required autocomplete="organization" placeholder="Firm name">
+            </label>
+            <label>Phone <span class="opt">(optional)</span>
+              <input name="phone" autocomplete="tel" placeholder="+91 ">
+            </label>
+            <label class="full">Tier you're eyeing <span class="opt">(optional)</span>
+              <select name="tier">
+                <option value="Not sure yet">not sure yet — let's talk</option>
+                <option>Knowledge Partner — ₹4,00,000</option>
+                <option>Associate Partner — ₹2,00,000</option>
+                <option>Power Partner — ₹75,000</option>
+                <option>Non-cash / something else</option>
+              </select>
+            </label>
+            <input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+            <button class="submit" type="submit" id="sendBtn">send it →</button>
+            <p class="formnote" id="formNote">goes straight to the TENET team. no mailing list, no drip campaign.</p>
+          </form>
+        </div>
+
+        <div class="won" id="won">
+          <p class="dialog-q">Got it. 🏆</p>
+          <p class="dialog-sub">initialising problem statement… assigning 1,500 students… done.</p>
+          <p style="font-size:15px;max-width:42ch;margin:0 auto 22px;">We'll reply within a day to co-design the problem statement and the scope. If you'd rather not wait:</p>
+          <div class="ctas" style="margin-top:0;">
+            <a class="cta solid" id="mailCta" href="#">email us directly →</a>
+            <a class="cta deck deckLink" href="#" download hidden>the deck (pdf) ↓</a>
+            <a class="cta ghost" href="tel:+919980134535">or just call</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="contacts">
+    <div><b>Shruti Nagendrakumar</b>
+      <a href="mailto:shruti_nagendrakumar_pgpyl2027@isb.edu">shruti_nagendrakumar_pgpyl2027@isb.edu</a><br>+91 99205 91036</div>
+    <div><b>Aditya Vamsi Kumbhari</b>
+      <a href="mailto:adityavamsi_kumbhari_pgpyl2027@isb.edu">adityavamsi_kumbhari_pgpyl2027@isb.edu</a><br>+91 99801 34535</div>
+  </div>
+</section>
+</div>
+
+<footer>
+  <img src="assets/isb-logo.jpg" alt="Indian School of Business" width="500" height="168" loading="lazy" decoding="async">
+  TENET 2026 · National Case Championship · an initiative by the ISB PGP YL Programme<br>Sep 12, 2026 · ISB Hyderabad Campus
+</footer>
+
+<div class="confetti" id="confetti" aria-hidden="true"></div>
+
+<script>
+  /* =====================================================================
+     WHERE THE FORM GOES  —  the only thing you may need to touch.
+
+     FORM_ENDPOINT is a free form-relay (no server, no hosting, no code).
+     It posts the form and emails it to TO_EMAIL below.
+
+     ONE-TIME SETUP (2 minutes):
+       1. Open this page, click YES, fill the form with your own details, send.
+       2. FormSubmit emails you a "Confirm your email" link. Click it. Once.
+       3. Every submission after that lands in your inbox. That's the whole setup.
+
+     If you'd rather not use a third party, set FORM_ENDPOINT = "" and the form
+     falls back to opening the sender's own mail client with everything
+     pre-filled — works everywhere, but they have to press send themselves.
+     ===================================================================== */
+  /* TO_EMAIL is only used for the mail-client fallback below.
+     FORM_ENDPOINT uses FormSubmit's hashed alias for that same address, so the
+     address itself never appears in the page source for scrapers to harvest. */
+  var TO_EMAIL      = "Tenet_pgpyl@isb.edu";
+  var FORM_ENDPOINT = "https://formsubmit.co/ajax/" + TO_EMAIL;
+  /* ↑ ACTIVATE ONCE: submit the form from a served page, then open the
+     Tenet_pgpyl@isb.edu inbox and click "Activate Form". FormSubmit will send a
+     new hashed alias for this address — paste it in place of the naked address
+     above so it isn't in the page source. (The old hash belonged to the
+     previous address and no longer applies.) */
+
+  /* IMPORTANT: relays refuse submissions from pages opened as files
+     (address bar starts with file:///). The page must be served over http(s) —
+     locally with `python -m http.server`, or from wherever you host it.
+     When it IS opened as a file we skip the relay entirely and use the
+     sender's mail client instead, so the form still works while you preview. */
+  var IS_FILE = (location.protocol === "file:");
+
+  /* personalise: append ?co=McKinsey%20%26%20Company to the link you send */
+  (function(){
+    var co = new URLSearchParams(location.search).get("co");
+    if(co){
+      co = co.slice(0,60);
+      var slots = document.querySelectorAll(".co");
+      for(var i=0;i<slots.length;i++){ slots[i].textContent = co; }
+      document.title = "TENET 2026 × " + co;
+    }
+  })();
+
+  /* countdown to registrations opening */
+  var DEADLINE = new Date("2026-08-12T00:00:00+05:30").getTime();
+  function pad(n){return String(n).padStart(2,"0");}
+  function tick(){
+    var left=DEADLINE-Date.now(); if(left<0) left=0;
+    var d=Math.floor(left/86400000),h=Math.floor(left/3600000)%24,
+        m=Math.floor(left/60000)%60,s=Math.floor(left/1000)%60;
+    document.getElementById("clock").textContent=d+"d "+pad(h)+"h "+pad(m)+"m "+pad(s)+"s";
+  }
+  tick(); setInterval(tick,1000);
+
+  /* the yes/no bit */
+  var NOS = [
+    "are you sure?",
+    "are you 200% sure?",
+    "are you really, really sure?",
+    "are you 1000% sure?",
+    "your competitor is also reading this",
+    "are you 10,000% sure?",
+    "final answer?",
+    "ok but consider: 1,500 students",
+    "this button no longer works"
+  ];
+  var SUBS = [
+    "interesting. let's try that again.",
+    "the button is getting smaller. that's on you.",
+    "yes has grown 3 sizes. purely coincidental.",
+    "somewhere, a 3-slide deck goes unwritten.",
+    "we're not saying it's a sign. look at the sizes.",
+    "still nothing? bold.",
+    "the yellow one is right there.",
+    "we admire the commitment. we won't reward it.",
+    "no is deprecated. use yes."
+  ];
+
+  var i = 0;
+  var yesBtn = document.getElementById("yesBtn");
+  var noBtn  = document.getElementById("noBtn");
+  var dsub   = document.getElementById("dsub");
+
+  noBtn.addEventListener("click", function(){
+    if(i >= NOS.length){ return; }
+    noBtn.textContent = NOS[i];
+    dsub.textContent  = SUBS[i];
+    i++;
+
+    var g = Math.min(i, 9);
+    yesBtn.style.fontSize   = (26 + g*9) + "px";
+    yesBtn.style.padding    = (14 + g*4) + "px " + (30 + g*10) + "px";
+    yesBtn.style.boxShadow  = (6 + g) + "px " + (6 + g) + "px 0 var(--ink)";
+    yesBtn.style.transform  = "rotate(" + (i % 2 ? -1.5 : 1.5) + "deg)";
+
+    noBtn.style.fontSize    = Math.max(9, 15 - i*0.9) + "px";
+    noBtn.style.padding     = Math.max(4, 11 - i) + "px " + Math.max(7, 18 - i) + "px";
+    noBtn.style.opacity     = Math.max(.32, 1 - i*0.07);
+    noBtn.style.transform   = "rotate(" + (i * 3) + "deg)";
+
+    if(i >= NOS.length){
+      noBtn.classList.add("dead");
+      noBtn.setAttribute("aria-disabled","true");
+      dsub.textContent = "that's it. that was every no we had.";
+    }
+  });
+
+  var CO = new URLSearchParams(location.search).get("co");
+
+  /* =====================================================================
+     THE DOWNLOADABLE DECK
+
+     Drop PDFs in the /decks folder next to this file. DECK_DEFAULT is what
+     everyone gets; DECKS maps a ?co= value to a tailored version, so
+     ...?co=McKinsey serves the McKinsey deck and everyone else gets the
+     generic one. Keys are matched loosely (lowercase, punctuation ignored).
+
+     Filenames: no spaces, no & — those break in URLs. Use hyphens.
+
+     The button hides itself if the PDF isn't there, so a missing file is
+     never a dead link in front of a sponsor. Check the browser console
+     (F12) if a button you expected doesn't appear.
+     ===================================================================== */
+  /* ⚠ DECK_DEFAULT is what a visitor gets when there's no ?co= match.
+     It currently points at the McKinsey deck, because that's the only PDF you
+     have — page 2 of it names McKinsey throughout. Export a firm-neutral
+     version, save it as decks/TENET-2026-Sponsorship-Deck.pdf, and change this
+     one line BEFORE you send a link to any other firm. The page logs a warning
+     to the console every time it serves the McKinsey deck to someone else. */
+  var DECK_DEFAULT = "decks/TENET-2026-McKinsey.pdf";
+  var DECKS = {
+    "mckinsey": "decks/TENET-2026-McKinsey.pdf"
+  };
+
+  (function(){
+    var key = (CO || "").toLowerCase().replace(/[^a-z0-9]/g,"");
+    var url = DECK_DEFAULT;
+    if(key){ for(var k in DECKS){ if(key.indexOf(k) !== -1){ url = DECKS[k]; } } }
+
+    if(url.indexOf("McKinsey") !== -1 && key.indexOf("mckinsey") === -1){
+      console.warn("[TENET] serving the McKinsey deck to \"" + (CO || "a visitor with no ?co=")
+        + "\". Swap DECK_DEFAULT for a firm-neutral deck before sending this link out.");
+    }
+
+    var links = document.querySelectorAll(".deckLink");
+    function reveal(){
+      for(var i=0;i<links.length;i++){
+        links[i].href = url;
+        links[i].setAttribute("download", url.split("/").pop());
+        links[i].removeAttribute("hidden");
+      }
+    }
+    /* file:// can't be probed — just show it during local preview */
+    if(IS_FILE){ reveal(); return; }
+    fetch(url, {method:"HEAD"})
+      .then(function(r){
+        if(r.ok){ reveal(); }
+        else { console.warn("[TENET] no deck at " + url + " — download button hidden."); }
+      })
+      .catch(function(){ console.warn("[TENET] couldn't check for " + url); });
+  })();
+
+  yesBtn.addEventListener("click", function(){
+    document.getElementById("ask").style.display = "none";
+    document.getElementById("formPanel").classList.add("show");
+    document.getElementById("ring").classList.add("yes");
+    var said = document.getElementById("said");
+    said.removeAttribute("hidden");
+    said.classList.add("show");
+    if(CO){ document.getElementById("coField").value = CO.slice(0,60); }
+    var f = document.getElementById("leadForm");
+    var first = f.querySelector("input[name=name]");
+    if(first){ first.focus({preventScroll:true}); }
+    party();
+  });
+
+  /* ---- form → email ---- */
+  var form     = document.getElementById("leadForm");
+  var sendBtn  = document.getElementById("sendBtn");
+  var formNote = document.getElementById("formNote");
+
+  function values(){
+    var d = new FormData(form), o = {};
+    d.forEach(function(v,k){ o[k] = String(v).trim(); });
+    return o;
+  }
+
+  function mailtoFallback(v){
+    var subject = "TENET 2026 — " + (v.company || "sponsorship") + " — yes";
+    var body =
+      "Name: "    + (v.name    || "") + "\n" +
+      "Email: "   + (v.email   || "") + "\n" +
+      "Company: " + (v.company || "") + "\n" +
+      "Phone: "   + (v.phone   || "") + "\n" +
+      "Tier: "    + (v.tier    || "") + "\n\n" +
+      "Sent from the TENET 2026 page.";
+    return "mailto:" + TO_EMAIL + "?subject=" + encodeURIComponent(subject)
+         + "&body=" + encodeURIComponent(body);
+  }
+
+  function succeed(v){
+    document.getElementById("formPanel").classList.remove("show");
+    document.getElementById("formPanel").style.display = "none";
+    document.getElementById("won").classList.add("show");
+    document.getElementById("mailCta").href = mailtoFallback(v);
+    party();
+  }
+
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+    if(!form.checkValidity()){
+      form.reportValidity();
+      formNote.textContent = "we need a name, a work email and a company. that's it.";
+      formNote.classList.add("err");
+      return;
+    }
+    var v = values();
+    if(v._honey){ return; }                 /* bot */
+
+    /* no relay, or page opened as a local file → hand it to their mail client */
+    if(!FORM_ENDPOINT || IS_FILE){
+      if(IS_FILE){ console.info("[TENET] file:// preview — using mail client instead of the relay."); }
+      window.location.href = mailtoFallback(v);
+      setTimeout(function(){ succeed(v); }, 800);
+      return;
+    }
+
+    sendBtn.disabled = true;
+    sendBtn.textContent = "sending…";
+    formNote.classList.remove("err");
+    formNote.textContent = "one moment.";
+
+    fetch(FORM_ENDPOINT, {
+      method: "POST",
+      headers: {"Content-Type":"application/json","Accept":"application/json"},
+      body: JSON.stringify({
+        _subject: "TENET 2026 · YES from " + (v.company || v.name),
+        _template: "table",
+        _captcha: "false",
+        name: v.name, email: v.email, company: v.company,
+        phone: v.phone || "—",
+        tier: v.tier || "not specified",
+        page: location.href
+      })
+    })
+    .then(function(r){ return r.json().catch(function(){ return {}; }); })
+    .then(function(res){
+      if(res && (res.success === "true" || res.success === true)){ succeed(v); return; }
+      throw new Error((res && res.message) ? res.message : "the relay rejected the submission");
+    })
+    .catch(function(err){
+      /* the real reason goes to the console for you; the visitor just gets a way out */
+      console.warn("[TENET form] not delivered: " + err.message);
+      sendBtn.disabled = false;
+      sendBtn.textContent = "send it →";
+      formNote.classList.add("err");
+      formNote.innerHTML = 'that didn\'t go through — <a href="' + mailtoFallback(v)
+        + '" style="color:var(--maroon);">click here to send it from your mail app</a> instead.';
+    });
+  });
+
+  function party(){
+    var box = document.getElementById("confetti");
+    var bits = ["✦","★","₹","✓","🏆","✦","●"];
+    var colors = ["#F2FF49","#FF3D9E","#6C4CF1","#8E1B32","#101014"];
+    for(var n=0; n<70; n++){
+      var el = document.createElement("i");
+      el.textContent = bits[Math.floor(Math.random()*bits.length)];
+      el.style.left = (Math.random()*100) + "%";
+      el.style.color = colors[Math.floor(Math.random()*colors.length)];
+      el.style.fontSize = (12 + Math.random()*20) + "px";
+      el.style.animationDuration = (2.4 + Math.random()*2.4) + "s";
+      el.style.animationDelay = (Math.random()*.9) + "s";
+      box.appendChild(el);
+    }
+    setTimeout(function(){ box.innerHTML = ""; }, 6500);
+  }
+</script>
+</body>
+</html>
