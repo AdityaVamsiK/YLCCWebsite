@@ -740,26 +740,20 @@
      never a dead link in front of a sponsor. Check the browser console
      (F12) if a button you expected doesn't appear.
      ===================================================================== */
-  /* ⚠ DECK_DEFAULT is what a visitor gets when there's no ?co= match.
-     It currently points at the McKinsey deck, because that's the only PDF you
-     have — page 2 of it names McKinsey throughout. Export a firm-neutral
-     version, save it as decks/TENET-2026-Sponsorship-Deck.pdf, and change this
-     one line BEFORE you send a link to any other firm. The page logs a warning
-     to the console every time it serves the McKinsey deck to someone else. */
-  var DECK_DEFAULT = "decks/TENET-2026-McKinsey.pdf";
+  /* DECK_DEFAULT is what every visitor gets. It's the firm-neutral deck, so it
+     is safe to send to anyone. To tailor a version for one prospect, drop the
+     PDF in /decks and add a ?co= key below — e.g. "acme": "decks/TENET-2026-Acme.pdf"
+     would serve that file to anyone opening ...?co=Acme, and everyone else
+     keeps the default. Keys match loosely: lowercase, punctuation ignored. */
+  var DECK_DEFAULT = "decks/TENET-2026-Sponsorship-Deck.pdf";
   var DECKS = {
-    "mckinsey": "decks/TENET-2026-McKinsey.pdf"
+    /* "mckinsey": "decks/TENET-2026-McKinsey.pdf"   <- older, names McKinsey throughout */
   };
 
   (function(){
     var key = (CO || "").toLowerCase().replace(/[^a-z0-9]/g,"");
     var url = DECK_DEFAULT;
     if(key){ for(var k in DECKS){ if(key.indexOf(k) !== -1){ url = DECKS[k]; } } }
-
-    if(url.indexOf("McKinsey") !== -1 && key.indexOf("mckinsey") === -1){
-      console.warn("[TENET] serving the McKinsey deck to \"" + (CO || "a visitor with no ?co=")
-        + "\". Swap DECK_DEFAULT for a firm-neutral deck before sending this link out.");
-    }
 
     var links = document.querySelectorAll(".deckLink");
     function reveal(){
