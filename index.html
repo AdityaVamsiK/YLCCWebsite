@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TENET 2026 — look this way</title>
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=Space+Grotesk:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -49,7 +51,12 @@
   @keyframes roll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
 
   /* ============ HERO / WORDMARK ============ */
-  .hero{padding:38px 0 30px;text-align:center;}
+  .hero{padding:38px 0 30px;text-align:center;position:relative;}
+  /* cube mark parked in the top-right corner of the hero, level with the ISB logo */
+  .tenet-mark{position:absolute;top:38px;right:0;height:clamp(50px,9.5vw,112px);width:auto;
+    animation:slam .7s cubic-bezier(.2,1.5,.4,1) both,cubefloat 5s 1s ease-in-out infinite;}
+  @keyframes cubefloat{0%,100%{transform:translateY(0) rotate(0);}50%{transform:translateY(-9px) rotate(-2.5deg);}}
+  @media(prefers-reduced-motion:reduce){.tenet-mark{animation:none;}}
   /* the logo file is blue-on-white; `multiply` drops its white box out so the
      dotted paper shows straight through it, as if it were a transparent PNG */
   .isb-hero{display:block;width:auto;height:clamp(54px,10vw,104px);margin:0 auto 26px;}
@@ -297,6 +304,7 @@
 
 <div class="wrap">
 <header class="hero">
+  <img class="tenet-mark" src="assets/tenet-logo.png" alt="" width="1124" height="1275" decoding="async">
   <img class="isb-hero" src="assets/isb-logo.png" alt="Indian School of Business"
        width="674" height="212" decoding="async">
   <span class="kicker">the YLs’ first-ever case competition</span>
